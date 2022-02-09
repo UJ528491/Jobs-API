@@ -8,6 +8,11 @@ import cors from "cors";
 import xss from "xss-clean";
 import rateLimit from "express-rate-limit";
 
+// Swagger
+import swaggerUI from "swagger-ui-express";
+import YAML from "yamljs";
+const swaggerDocument = YAML.load("./swagger.yaml");
+
 // error handler
 import { notFound as notFoundMiddleware } from "./middleware/not-found";
 import { errorHandlerMiddleware } from "./middleware/error-handler";
@@ -32,8 +37,11 @@ app.use(cors());
 app.use(xss());
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("<h1>jobs API</h1><a href='/api-docs'>swagger</a>");
 });
+
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+
 // routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/jobs", authenticateUser, jobsRouter);
